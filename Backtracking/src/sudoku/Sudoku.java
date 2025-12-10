@@ -57,59 +57,48 @@ public class Sudoku {
 	}
 
     public Boolean isPresentBloc(int i, int y, int val) {
-    	if((i + 1) % 3 != 0) {
-    		if(i < 0) {
-    			i = 0;
-    		}
-    		else {
-    			int a = i / 3;
-        		i = (3 * a);
-    		}
-    	}
-    	
-    	if((i + 1) == this.tabSudoku.length) {
-    		i = i - 2;
-    	}
-    	
-    	if((y + 1) == this.tabSudoku.length) {
-    		y = y - 2;
-    	}
-    	
-    	if((y + 1) % 3 != 0) {
-    		if(y < 0) {
-    			y = 0;
-    		}
-    		else {
-    			int a = y / 3;
-        		y = (3 * a);
-    		}
-    	}
-    	
-    	for(int t = i; t < (i + 3); t++) {
-    		for(int s = y; s < (y + 3); s++) {
-        		if(this.tabSudoku[t][s] == val) {
-        			return true;
-        		}
-        	}
-    	}
-    	
-    	return false;
-	}
-    
-    public void SolveSoduku() {
-    	for(int i = 0; i < this.tabSudoku.length; i++) {
-    		int val = 1;
-    		for(int y = 0; y < this.tabSudoku[0].length; y++) {
-        		if(this.tabSudoku[i][y] == 0) {
-        			while(isPresentHorizontale(i, val) || isPresentVerticale(y, val) || isPresentBloc(i, y, val)) {
-        				val++;
-        			}
-        			this.tabSudoku[i][y] = val;
-        			val = 1;
-        		}
-        	}
-    	}
+        int startI = (i / 3) * 3;
+        int startY = (y / 3) * 3;
+
+        for(int t = startI; t < startI + 3; t++) {
+            for(int s = startY; s < startY + 3; s++) {
+                if(this.tabSudoku[t][s] == val) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
+    	
+
+    
+    public boolean SolveSoduku() {
+        for (int i = 0; i < this.tabSudoku.length; i++) {
+            for (int y = 0; y < this.tabSudoku[0].length; y++) {
+                if (this.tabSudoku[i][y] == 0) {
+                    int val = 1;
+                    while (val <= 9) {
+                        if (!isPresentHorizontale(i, val) &&
+                            !isPresentVerticale(y, val) &&
+                            !isPresentBloc(i, y, val)) {
+
+                            this.tabSudoku[i][y] = val;
+
+                            if (SolveSoduku()) {
+                                return true;       
+                            }
+                            this.tabSudoku[i][y] = 0;
+                        }
+
+                        val++;
+                    }
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     
 	
 	@Override
